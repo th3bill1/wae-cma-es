@@ -6,13 +6,13 @@ import numpy as np
 
 PSigmaMode = Literal["zero", "random"]
 
-
 @dataclass
 class CMAESResult:
     best_x: np.ndarray
     best_f: float
     evaluations: int
     history: list[float]
+    mean_history: list[np.ndarray]
 
 
 @dataclass
@@ -80,6 +80,7 @@ class CMAES:
         best_f = objective(best_x)
         evaluations = 1
         history = [best_f]
+        mean_history = [m.copy()]
 
         generation = 0
 
@@ -87,7 +88,7 @@ class CMAES:
             generation += 1
 
             z_population = self.rng.normal(size=(self.lambda_, self.n))
-            y_population = z_population @ (B * D).T
+            y_population = z_population @ (B @ np.diag(D)).T
             x_population = m + sigma * y_population
 
             values = np.array([objective(x) for x in x_population])
@@ -104,6 +105,9 @@ class CMAES:
 
             old_m = m.copy()
             m = np.sum(self.weights[:, None] * x_selected, axis=0)
+
+            mean_history.append(m.copy())
+
             y_w = (m - old_m) / sigma
 
             p_sigma = (
@@ -165,4 +169,5 @@ class CMAES:
             best_f=best_f,
             evaluations=evaluations,
             history=history,
+            mean_history=mean_history,
         )

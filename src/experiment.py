@@ -16,6 +16,7 @@ class ExperimentResult:
     evaluations: int
     reached_target: bool
     history: list[float]
+    mean_history: list[list[float]]
 
 
 def run_single_experiment(
@@ -41,16 +42,17 @@ def run_single_experiment(
     result = optimizer.optimize(objective)
 
     return ExperimentResult(
-        function_name=function_name,
-        dimension=dimension,
-        p_sigma_mode=p_sigma_mode,
-        generator_name=generator_name,
-        seed=seed,
-        best_f=result.best_f,
-        evaluations=result.evaluations,
-        reached_target=result.best_f <= target_f,
-        history=result.history,
-    )
+    function_name=function_name,
+    dimension=dimension,
+    p_sigma_mode=p_sigma_mode,
+    generator_name=generator_name,
+    seed=seed,
+    best_f=result.best_f,
+    evaluations=result.evaluations,
+    reached_target=result.best_f <= target_f,
+    history=result.history,
+    mean_history=[point.tolist() for point in result.mean_history],
+)
 
 
 def experiment_result_to_dict(result: ExperimentResult) -> dict:
