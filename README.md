@@ -27,3 +27,13 @@ Badamy, czy losowa inicjalizacja `p_sigma` wpływa na:
 - **Pandas** — zapis i analiza wyników eksperymentów
 - **tqdm** — pasek postępu
 - **cma** — biblioteka referencyjna do walidacji poprawności implementacji
+
+## Do zrobienia:
+
+- pobawić się z parametrami
+- zrobić coś żeby zauważalna była różnica pomiędzy bazową wersją i modyfikacją XD
+- uruchomić to na większych instancjach
+- sprawdzić czy nie dało by się jeszcze jakoś dodatkowo porównywać tych wyników
+- poprawić wizualnie obecną wizualizację trajektorii
+- zastanowić sie czy na pewno chcemy uzywac jupytera, moze jakos prosciej to opisac?
+- zaczac dokumentacje koncowa (bo pewnie wyjdzie wtedy cos co chcielibysmy zmienic w kodzie)
