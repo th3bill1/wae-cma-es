@@ -17,3 +17,7 @@ env/
 dist/
 *.egg-info/
 
+results/raw/*.csv
+results/raw/*.json
+results/summary/*.csv
+results/plots/*.png
