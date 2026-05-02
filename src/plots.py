@@ -83,7 +83,26 @@ def create_mean_trajectory_plot(
         target_f=target_f,
     )
 
-    x_min, x_max, y_min, y_max = PLOT_RANGES[function_name]
+    standard_path = np.array(standard.mean_history)
+    modified_path = np.array(modified.mean_history)
+
+    all_points = np.vstack([standard_path, modified_path])
+    margin = 0.5
+    data_x_min, data_x_max = all_points[:, 0].min() - margin, all_points[:, 0].max() + margin
+    data_y_min, data_y_max = all_points[:, 1].min() - margin, all_points[:, 1].max() + margin
+
+    # include global optimum in view
+    if function_name in ["sphere", "ackley", "rastrigin"]:
+        opt_x, opt_y = 0.0, 0.0
+    else:
+        opt_x, opt_y = 1.0, 1.0
+    data_x_min = min(data_x_min, opt_x - margin)
+    data_x_max = max(data_x_max, opt_x + margin)
+    data_y_min = min(data_y_min, opt_y - margin)
+    data_y_max = max(data_y_max, opt_y + margin)
+
+    x_min, x_max = data_x_min, data_x_max
+    y_min, y_max = data_y_min, data_y_max
 
     xs = np.linspace(x_min, x_max, 300)
     ys = np.linspace(y_min, y_max, 300)
@@ -93,9 +112,6 @@ def create_mean_trajectory_plot(
     for i in range(X.shape[0]):
         for j in range(X.shape[1]):
             Z[i, j] = objective(np.array([X[i, j], Y[i, j]]))
-
-    standard_path = np.array(standard.mean_history)
-    modified_path = np.array(modified.mean_history)
 
     Path(output_dir).mkdir(parents=True, exist_ok=True)
 
