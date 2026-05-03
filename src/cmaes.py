@@ -20,7 +20,7 @@ class CMAESConfig:
     dimension: int
     max_evaluations: int = 10_000
     target_f: float = 1e-8
-    initial_sigma: float = 0.5
+    initial_sigma: float = 1.0
     p_sigma_mode: PSigmaMode = "zero"
 
 

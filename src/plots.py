@@ -126,6 +126,7 @@ def create_mean_trajectory_plot(
         markersize=3,
         linewidth=1.5,
         label="standard: p_sigma(0)=0",
+        zorder=2,
     )
 
     plt.plot(
@@ -135,45 +136,50 @@ def create_mean_trajectory_plot(
         markersize=3,
         linewidth=1.5,
         label="modified: p_sigma(0)=random",
+        zorder=2,
     )
 
     plt.scatter(
         standard_path[0, 0],
         standard_path[0, 1],
         marker="x",
-        s=80,
+        s=100,
         label="start standard",
+        zorder=3,
     )
 
     plt.scatter(
         modified_path[0, 0],
         modified_path[0, 1],
         marker="x",
-        s=80,
+        s=100,
         label="start modified",
+        zorder=3,
     )
 
     plt.scatter(
         standard_path[-1, 0],
         standard_path[-1, 1],
         marker="*",
-        s=120,
+        s=150,
         label="end standard",
+        zorder=4,
     )
 
     plt.scatter(
         modified_path[-1, 0],
         modified_path[-1, 1],
         marker="*",
-        s=120,
+        s=150,
         label="end modified",
+        zorder=4,
     )
 
     if function_name in ["sphere", "ackley", "rastrigin"]:
-        plt.scatter(0, 0, marker="+", s=120, label="minimum globalne")
+        plt.scatter(0, 0, marker="+", s=120, label="minimum globalne", zorder=5)
 
     if function_name == "rosenbrock":
-        plt.scatter(1, 1, marker="+", s=120, label="minimum globalne")
+        plt.scatter(1, 1, marker="+", s=120, label="minimum globalne", zorder=5)
 
     plt.title(
         f"Trajektoria środka populacji — {function_name}, 2D, seed={seed}, PRNG={generator_name}"
