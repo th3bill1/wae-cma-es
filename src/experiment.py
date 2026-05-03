@@ -27,6 +27,7 @@ def run_single_experiment(
     seed: int,
     max_evaluations: int = 10_000,
     target_f: float = 1e-8,
+    initial_sigma: float = 0.5,
 ) -> ExperimentResult:
     objective = BENCHMARKS[function_name]
     rng = create_rng(generator_name, seed)
@@ -36,6 +37,7 @@ def run_single_experiment(
         max_evaluations=max_evaluations,
         target_f=target_f,
         p_sigma_mode=p_sigma_mode,
+        initial_sigma=initial_sigma,
     )
 
     optimizer = CMAES(config=config, rng=rng)
