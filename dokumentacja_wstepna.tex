@@ -1,0 +1,117 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{comment}
+\usepackage[]{hypcap}
+\usepackage{chngcntr}
+\usepackage{float}
+\usepackage{ragged2e}
+
+\newcommand{\projecttitle}{Modyfikacja algorytmu CMA-ES}
+\newcommand{\authorone}{Aleksandra Wieczorek}
+\newcommand{\authortwo}{Wojciech Wójcik}
+\newcommand{\projectdate}{Warszawa, \today}
+
+
+\begin{document}
+\sloppy
+
+\begin{titlepage}
+    \centering
+
+    \includegraphics[width=0.8\textwidth]{politechnika.png}\par
+    \vspace{2.5cm}
+
+    {\Large Wstęp do algorytmów ewolucyjnych\par}
+    \vspace{1.2cm}
+
+    {\Huge \bfseries \projecttitle \par}
+    \vspace{2cm}
+
+    {\large \projectdate\par}
+
+    \vfill
+    {\large \authorone\par}
+    \vspace{0.3cm}
+    {\large \authortwo\par}
+
+    
+\end{titlepage}
+\newpage
+
+%\section{Wprowadzenie}
+%W algorytmie CMA-ES wektor p sigma , reprezentujący ścieżkę ewolucyjną, standardowo inicjalizowany jest wektorem zerowym. Zmodyfikuj algorytm tak, aby wektor ten był inicjalizowany wektorem losowym.
+%Zbadaj działanie wersji standardowej algorytmu oraz wersji zmodyfikowanej, używając wybranych funkcji testowych. W badaniu wykorzystaj co najmniej dwa róże generatory liczb losowych.
+
+
+
+\section{Opis problemu}
+ 
+Algorytm CMA-ES (Covariance Matrix Adaptation Evolution Strategy) jest jedną z~najskuteczniejszych metod optymalizacji ciągłej bez użycia gradientu. Algorytm iteracyjnie próbkuje populację kandydatów z~wielowymiarowego rozkładu normalnego $\mathcal{N}(\mathbf{m}, \sigma^2 \mathbf{C})$, a~następnie adaptuje parametry tego rozkładu --- średnią~$\mathbf{m}$, krok mutacji~$\sigma$ oraz macierz kowariancji~$\mathbf{C}$ --- na podstawie jakości uzyskanych rozwiązań.
+ 
+Kluczowym mechanizmem kontroli kroku $\sigma$ jest ścieżka ewolucyjna $\mathbf{p}_\sigma$ (ang.\ \textit{cumulative step-size adaptation path}). Wektor ten akumuluje informację o~kierunkach kolejnych kroków algorytmu i~jest aktualizowany w~każdej generacji zgodnie ze wzorem:
+\[
+\mathbf{p}_\sigma \leftarrow (1 - c_\sigma)\,\mathbf{p}_\sigma + \sqrt{c_\sigma(2-c_\sigma)\,\mu_{\mathrm{eff}}}\;\mathbf{C}^{-1/2}\frac{\mathbf{m}' - \mathbf{m}}{\sigma}
+\]
+gdzie $c_\sigma$ jest współczynnikiem kumulacji, a~$\mu_{\mathrm{eff}}$ efektywną wielkością populacji rodziców. Norma wektora $\mathbf{p}_\sigma$ jest porównywana z~oczekiwaną normą wektora losowego $\mathcal{N}(\mathbf{0}, \mathbf{I})$ --- jeśli jest większa, krok $\sigma$ rośnie; jeśli mniejsza --- maleje.
+ 
+\textbf{Standardowa inicjalizacja} zakłada $\mathbf{p}_\sigma^{(0)} = \mathbf{0}$, co odpowiada brakowi wstępnej informacji o~kierunku przeszukiwania. Celem projektu jest zbadanie, jak \textbf{losowa inicjalizacja} tego wektora wpływa na zbieżność i~jakość wyników algorytmu.
+ 
+\section{Sposób rozwiązania}
+ 
+Projekt obejmuje implementację algorytmu CMA-ES w~dwóch wariantach:
+\begin{itemize}
+    \item \textbf{Wariant standardowy:} $\mathbf{p}_\sigma^{(0)} = \mathbf{0}$,
+    \item \textbf{Wariant zmodyfikowany:} $\mathbf{p}_\sigma^{(0)} = \mathbf{v}$, gdzie $\mathbf{v}$ jest wektorem losowym.
+\end{itemize}
+Wektor losowy $\mathbf{v}$ będzie generowany na dwa sposoby, z~użyciem co najmniej dwóch różnych generatorów liczb pseudolosowych (PRNG), np.:
+\begin{itemize}
+    \item \texttt{numpy.random.default\_rng()} --- generator PCG64,
+    \item \texttt{numpy.random.MT19937} --- generator Mersenne Twister.
+\end{itemize}
+
+\section{Planowane eksperymenty numeryczne}
+ 
+Eksperymenty zostaną przeprowadzone na zbiorze klasycznych funkcji testowych o~różnej charakterystyce:
+\begin{itemize}
+    \item \textbf{Sphere} --- $f(\mathbf{x}) = \sum x_i^2$ --- wypukła, unimodalna, izotropowa,
+    \item \textbf{Rosenbrock} --- wąska, zakrzywiona dolina, trudna dla metod gradientowych,
+    \item \textbf{Rastrigin} --- silnie wielomodalna z~regularną siatką minimów lokalnych,
+    \item \textbf{Ackley} --- wielomodalna z~jednym wyraźnym minimum globalnym.
+\end{itemize}
+ 
+Dla każdej konfiguracji (wariant inicjalizacji $\times$ generator $\times$ funkcja testowa) planowane jest wykonanie co najmniej 30 niezależnych uruchomień w~wymiarowościach $n \in \{2, 10, 30\}$. Mierzone metryki obejmą:
+\begin{itemize}
+    \item liczbę ewaluacji funkcji celu do osiągnięcia zadanej dokładności,
+    \item końcową najlepszą wartość funkcji,
+    \item krzywe zbieżności (wartość najlepsza vs.\ liczba ewaluacji).
+\end{itemize}
+ 
+Wyniki zostaną porównane z~użyciem statystyk opisowych (mediana, kwartyle) oraz testów istotności statystycznej (np.\ test Wilcoxona), aby ocenić, czy losowa inicjalizacja $\mathbf{p}_\sigma$ wpływa istotnie na działanie algorytmu.
+ 
+\section{Wybór technologii}
+ 
+\begin{itemize}
+    \item \textbf{Język programowania:} Python 3.11+
+    \item \textbf{Biblioteki obliczeniowe:} NumPy (operacje macierzowe, generatory PRNG), SciPy (ewentualnie algebra liniowa)
+    \item \textbf{Wizualizacja:} Matplotlib, ewentualnie Seaborn
+    \item \textbf{Analiza statystyczna:} SciPy (\texttt{scipy.stats} --- testy nieparametryczne)
+    \item \textbf{Środowisko:} Jupyter Notebook (eksperymenty), skrypty \texttt{.py} (implementacja algorytmu)
+    \item \textbf{Kontrola wersji:} Git
+\end{itemize}
+ 
+Implementacja CMA-ES zostanie napisana od podstaw w~celu pełnej kontroli nad inicjalizacją $\mathbf{p}_\sigma$ i~pozostałymi parametrami algorytmu. Jako punkt odniesienia posłuży biblioteka \texttt{cma} (autorstwa N.~Hansena), umożliwiająca walidację poprawności implementacji.
+ 
+
+\end{document}
