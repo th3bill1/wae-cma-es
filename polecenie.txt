@@ -1,0 +1,70 @@
+Informacje o projekcie
+Zasady ogólne
+Projekt realizowany jest w zespołach dwuosobowych. Zespoły trzyosobowe dopuszcza się jedynie w drodze wyjątku.
+Osoby tworzące zespół zobowiązane są do:
+zgłoszenia składu osobowego zespołu
+
+wyboru zadania projektowego
+
+dostarczenia dokumentacji wstępnej projektu
+
+przedstawienia cząstkowych wyników zadania w trakcie semestru
+
+dostarczenia dokumentacji końcowej projektu
+
+prezentacji projektu.
+
+Zgłoszenie zespołu i wybór zadania
+Do terminu 02.04.2026 zespół zobowiązany jest do wysłania wiadomości e-mail, w której zostaną zawarte następujące informacje:
+imiona, nazwiska oraz numery indeksow osób, tworzących zespół
+5 numerów tematów projektowych w porządku malejącego stopnia preferencji.
+Z podanej listy tematów wybierany będzie pierwszy ten, który nie koliduje z wyborem zespołów, które zgłoszenia wysłały wcześniej (przydział odbywa się według zasady: kto pierwszy, ten lepszy).
+Zgłoszenia należy wysyłać na adres:
+eryk.warchulski(ʕ •ᴥ• ʔ)pw.edu.pl
+Temat każdej wiadomości, która dotyczy zagadnień związanych z przedmiotem, należy rozszerzyć o tag [WAE 2026L]. Wiadomości wysłane bez taga będą traktowane jako spam.
+Brak zgłoszenia zespołu oraz zadania projektowego do wskazanego powyżej terminu bez uprzedniego poinformowania o planowanym opóźnieniu rownóważny jest rezygnacji z wykonywania projektu.
+Dokumentacja wstępna
+Do terminu 23.04.2026 zespół zobowiązany jest przekazać dokumentację wstępną w postaci pliku pdf. Plik dokumentacji należy zatytułować w nastepujący sposób:
+wae-init-#1-2026l-#2-#3.pdf
+Przy czym za symbol #1 należy podstawić numer zadania projektowego, a za symbole #2, #3 numery indeksów członków zespołu (np. wae-init-5-2026l-343420-342137.pdf)
+Treść dokumentacji wstępnej powinna składać się z:
+opisu problemu i jego sposobu rozwiązania
+
+planowanych eksperymentów numerycznych
+
+wyboru technologii, w której realizowany będzie projekt.
+
+Dokument nie powinien przekraczać 2 stron A4.
+Ponadto należy mieć na uwadze, że celem dokumentacji wstępnej jest przedstawienie swojej wstępnej wizji dotyczącej realizowanego projektu, która pozwoli prowadzącemu ocenić czy zespół poprawnie zrozumiał dany temat i wybrał odpowiednie narzędzia. Ewolucja wizji (nawet skrajna) w trakcie realizacji jest jak najbardziej akceptowalna.
+Dokumentacja wstępna oceniana jest binarnie. Niedostarczenie dokumentacji wstępnej w powyżej wskazanym terminie rownóważny jest rezygnacji z realizacji projektu.
+Dokumentacja końcowa
+Do terminu 28.05.2026 zespół zobowiązany jest zaprezentować dotychczas uzyskane wyniki.
+Do terminu 11.06.2026 zespół zobowiązany jest dostarczyć dokumentację końcową projektu w formie pliku PDF wraz z kodem źródłowym w postaci archiwum repozytorium git z pełną historią zmian (tj. git bundle).
+Pliki należy zatytułować w następujący sposób:
+
+          wae-end-#1-2026l-#2-#3.pdf
+          wae-end-#1-2026l-#2-#3.bundle
+      
+Symbole #1, #2, #3 należy zinterpolować tak samo jak w dokumentacji wstępnej.
+Dokumentacja końcowa, w której powinnien znaleźć się szczegółowy opis: problemu, zastosowanych algorytmów, przeprowadzonych eksperymentów oraz ich wyników. Ponadto jeśli między dokumentacja wstępną, a końcowa występują znaczące rożnice, to należy je opisać w stosownej sekcji dokumentacji końcowej.
+Kod zródłowy
+Należy zadbać o to, aby dostarczony kod źródłowy był jak najbardziej przenośny. Koniecznie musi dać się kompilować/interpretować pod systemem Linux. Ze względu na stosowanie zależności zewnętrznych w kodzie warto rozważyć konteneryzacje (np. via podman).
+Ponadto zawarty powinien zostać skrypt umożliwiający odtworzenie wszystkich przeprowadzonych eksperymentów oraz zaprezentowanych wykresów.
+Dane uzyskane w ramach eksperymentów numerycznych wraz z ziarnami generatorów liczb pseudolosowych.
+Wszystkie przeprowadzone eksperymenty numeryczne w ramach projektu powinny dać się zreprodukować. Co oznacza, że należy dostarczyć listę ziaren PRNG użytych w eksperymentach numerycznych.
+Jeśli dane uzyskane z eksperymentów numerycznych przekraczają 5 MB, to powinny być dostarczone poza repozytorium git (np. jako oddzielne archiwum via OneDrive).
+Dokumentacja końcowa
+Dokumentacja końcowa napisana zgodnie z szablonem Springer Nature jest w skali 0-50 punktów. Na ocenę składają się:
+poprawność implementacji
+poprawność przeprowadzonych eksperymentów numerycznych
+powtarzalność eksperymentów
+dyskusja wyników
+poprawność językowa tekstu sprawozdania.
+Tekst pracy powinien zajmować maksymalnie 8 stron A4.
+Oceny końcowe prac dostarczonych między 12.06.2025-17.06.2025 przemnażane są przez mnożnik 0.7.
+Prace dostarczone po 17.06.2025 nie będą oceniane.
+Zespoły, które złożą wymagane pliki w terminie, zobowiązane są do krótkiej prezentacji (niekoniecznie multimedialnej) swoich projektów (maksymalnie 8-10 minut). Po odbyciu prezentacji zespół zostanie poinformowany o proponowanej ocenie. Termin prezentacji proponowany jest przez zespół i nie może przekroczyć tygodnia od momentu złożenia projektu.
+Zakłada się, że autorzy projektu w pełni rozumieją prezentowaną pracę. Brak odpowiedzi na (często) trywialne pytania ze strony prowadzącego dotyczących projektu uznawany jest za pracę niesamodzielną i skutkuje niezaliczeniem projektu.
+Jeśli jakiekolwiek fragmenty dokumentacji końcowej były generowane przy pomocy wielkich modeli językowych, to należy pracę rozszerzyć o stronę zawierającą informacje, które dokładnie części dokumentu były generowane automatycznie.
+W przypadku większości tematów projektowych czytelność kodu zródłowego nie podlega ocenie, o ile dostarczony kod nie będzie wybitnie nieczytelny. Zalecane jest, aby kod był sformatowany zgodnie tylko z jednym stylem (np. zgodnie z Google Style Guides).
+Projekt można realizować w dowolnym języku programowania z wyłączeniem języków ezoterycznych.

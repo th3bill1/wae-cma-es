@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -13,6 +14,69 @@ PLOT_RANGES = {
     "rastrigin": (-5.5, 5.5, -5.5, 5.5),
     "ackley": (-5, 5, -5, 5),
 }
+
+
+def create_convergence_plots(histories_path: str, output_dir: str) -> None:
+    with open(histories_path, "r", encoding="utf-8") as f:
+        histories = json.load(f)
+
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+
+    functions = sorted(set(h["function"] for h in histories))
+    dimensions = sorted(set(h["dimension"] for h in histories))
+
+    for function_name in functions:
+        for dimension in dimensions:
+            zero_histories = [
+                h["history"] for h in histories
+                if h["function"] == function_name
+                and h["dimension"] == dimension
+                and h["p_sigma_mode"] == "zero"
+            ]
+            random_histories = [
+                h["history"] for h in histories
+                if h["function"] == function_name
+                and h["dimension"] == dimension
+                and h["p_sigma_mode"] == "random"
+            ]
+
+            if not zero_histories or not random_histories:
+                continue
+
+            max_len = max(
+                max(len(h) for h in zero_histories),
+                max(len(h) for h in random_histories),
+            )
+
+            def pad_and_stack(hist_list, length):
+                padded = []
+                for h in hist_list:
+                    padded.append(h + [h[-1]] * (length - len(h)))
+                return np.array(padded)
+
+            zero_arr = pad_and_stack(zero_histories, max_len)
+            random_arr = pad_and_stack(random_histories, max_len)
+
+            zero_median = np.median(zero_arr, axis=0)
+            random_median = np.median(random_arr, axis=0)
+
+            generations = np.arange(max_len)
+
+            plt.figure(figsize=(8, 5))
+            plt.plot(generations, zero_median, label="standard: p_sigma(0)=0", linewidth=1.5)
+            plt.plot(generations, random_median, label="modified: p_sigma(0)=random", linewidth=1.5)
+            plt.yscale("log")
+            plt.xlabel("Generacja")
+            plt.ylabel("Median best f(x)")
+            plt.title(f"Zbieżność — {function_name}, n={dimension}")
+            plt.legend()
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+
+            filename = output / f"convergence_{function_name}_n{dimension}.png"
+            plt.savefig(filename, dpi=200)
+            plt.close()
 
 
 def create_boxplots(results_path: str, output_dir: str) -> None:
