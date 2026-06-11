@@ -1,7 +1,3 @@
-zaczynamy w punkcie wylosowanym z [-5,5]
-
-Covariance matrix adaptation evolution strategy (CMA-ES)
-
 
 dodatkwoo zbadajmy - zachowanie sie sigmy - trajektoria w czasie na funkcji losowej ktora jest szumem gaussowskim - nie z pojedynczego uruchumienai 
 dobrze by bylo na rozniej klasie problemow optymalizacyjcnyh - fjanie by bylo jednomodalna funckje jeszcze (kwadratowa, elipsoidalna)
