@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Literal
 
 import numpy as np
@@ -13,6 +13,8 @@ class CMAESResult:
     evaluations: int
     history: list[float]
     mean_history: list[np.ndarray]
+    sigma_history: list[float] = field(default_factory=list)
+    p_sigma_norm_history: list[float] = field(default_factory=list)
 
 
 @dataclass
@@ -81,6 +83,8 @@ class CMAES:
         evaluations = 1
         history = [best_f]
         mean_history = [m.copy()]
+        sigma_history = [float(sigma)]
+        p_sigma_norm_history = [float(np.linalg.norm(p_sigma))]
 
         generation = 0
 
@@ -163,6 +167,8 @@ class CMAES:
             C_inv_sqrt = B @ np.diag(1.0 / D) @ B.T
 
             history.append(best_f)
+            sigma_history.append(float(sigma))
+            p_sigma_norm_history.append(float(norm_p_sigma))
 
         return CMAESResult(
             best_x=best_x,
@@ -170,4 +176,6 @@ class CMAES:
             evaluations=evaluations,
             history=history,
             mean_history=mean_history,
+            sigma_history=sigma_history,
+            p_sigma_norm_history=p_sigma_norm_history,
         )
