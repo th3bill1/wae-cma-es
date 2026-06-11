@@ -1,6 +1,8 @@
 from dataclasses import asdict, dataclass
 
-from src.benchmarks import BENCHMARKS
+import numpy as np
+
+from src.benchmarks import BENCHMARKS, STOCHASTIC_BENCHMARKS, make_gaussian_noise
 from src.cmaes import CMAES, CMAESConfig
 from src.rng import create_rng
 
@@ -29,7 +31,12 @@ def run_single_experiment(
     target_f: float = 1e-8,
     initial_sigma: float = 1.0,
 ) -> ExperimentResult:
-    objective = BENCHMARKS[function_name]
+    if function_name in STOCHASTIC_BENCHMARKS:
+        noise_rng = np.random.default_rng(seed + 1_000_003)
+        objective = make_gaussian_noise(noise_rng)
+    else:
+        objective = BENCHMARKS[function_name]
+
     rng = create_rng(generator_name, seed)
 
     config = CMAESConfig(
