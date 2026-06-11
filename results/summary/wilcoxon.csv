@@ -1,0 +1,31 @@
+function,dimension,generator,metric,wilcoxon_statistic,p_value,n_pairs,n_zero_differences,status,interpretation
+ackley,2,mt19937,best_f,206.0,0.8036185216409255,30,1,ok,Wilcoxon signed-rank test completed.
+ackley,2,pcg64,best_f,206.0,0.5978077705949545,30,0,ok,Wilcoxon signed-rank test completed.
+ackley,10,mt19937,best_f,209.0,0.6408254038542509,30,0,ok,Wilcoxon signed-rank test completed.
+ackley,10,pcg64,best_f,216.0,0.7456546742469072,30,0,ok,Wilcoxon signed-rank test completed.
+ackley,30,mt19937,best_f,227.0,0.9192965272814035,30,0,ok,Wilcoxon signed-rank test completed.
+ackley,30,pcg64,best_f,167.0,0.18396909348666668,30,0,ok,Wilcoxon signed-rank test completed.
+gaussian_noise,2,mt19937,best_f,0.0,1.0,30,30,no_difference,All paired differences are zero.
+gaussian_noise,2,pcg64,best_f,0.0,1.0,30,30,no_difference,All paired differences are zero.
+gaussian_noise,10,mt19937,best_f,0.0,1.0,30,30,no_difference,All paired differences are zero.
+gaussian_noise,10,pcg64,best_f,0.0,1.0,30,30,no_difference,All paired differences are zero.
+gaussian_noise,30,mt19937,best_f,0.0,1.0,30,30,no_difference,All paired differences are zero.
+gaussian_noise,30,pcg64,best_f,0.0,1.0,30,30,no_difference,All paired differences are zero.
+rastrigin,2,mt19937,best_f,156.0,0.1835368973172704,30,1,ok,Wilcoxon signed-rank test completed.
+rastrigin,2,pcg64,best_f,201.0,0.9636687398689949,30,2,ok,Wilcoxon signed-rank test completed.
+rastrigin,10,mt19937,best_f,232.0,0.9917943474729133,30,0,ok,Wilcoxon signed-rank test completed.
+rastrigin,10,pcg64,best_f,162.0,0.23007805703968653,30,1,ok,Wilcoxon signed-rank test completed.
+rastrigin,30,mt19937,best_f,207.0,0.5999262845940143,30,0,ok,Wilcoxon signed-rank test completed.
+rastrigin,30,pcg64,best_f,218.0,0.765513273408791,30,0,ok,Wilcoxon signed-rank test completed.
+rosenbrock,2,mt19937,best_f,222.0,0.8393927440047264,30,0,ok,Wilcoxon signed-rank test completed.
+rosenbrock,2,pcg64,best_f,212.0,0.685047073289752,30,0,ok,Wilcoxon signed-rank test completed.
+rosenbrock,10,mt19937,best_f,205.0,0.7869371467657944,30,1,ok,Wilcoxon signed-rank test completed.
+rosenbrock,10,pcg64,best_f,181.0,0.2988441474735737,30,0,ok,Wilcoxon signed-rank test completed.
+rosenbrock,30,mt19937,best_f,220.0,0.8078304156661034,30,0,ok,Wilcoxon signed-rank test completed.
+rosenbrock,30,pcg64,best_f,147.0,0.0803273618221283,30,0,ok,Wilcoxon signed-rank test completed.
+sphere,2,mt19937,best_f,223.0,0.8552717231214046,30,0,ok,Wilcoxon signed-rank test completed.
+sphere,2,pcg64,best_f,226.0,0.9032264724373817,30,0,ok,Wilcoxon signed-rank test completed.
+sphere,10,mt19937,best_f,215.0,0.7303419969975948,30,0,ok,Wilcoxon signed-rank test completed.
+sphere,10,pcg64,best_f,135.0,0.044907208532094955,30,0,ok,Wilcoxon signed-rank test completed.
+sphere,30,mt19937,best_f,116.0,0.015460003167390823,30,0,ok,Wilcoxon signed-rank test completed.
+sphere,30,pcg64,best_f,227.0,0.9192965272814035,30,0,ok,Wilcoxon signed-rank test completed.
