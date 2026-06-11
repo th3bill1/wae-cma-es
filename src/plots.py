@@ -88,6 +88,13 @@ def _eval_counts_for_history(history_length: int, dimension: int) -> np.ndarray:
     return 1 + np.arange(history_length) * lambda_
 
 
+def _pad_and_stack(histories: list[list[float]], length: int) -> np.ndarray:
+    padded = []
+    for history in histories:
+        padded.append(history + [history[-1]] * (length - len(history)))
+    return np.array(padded)
+
+
 def create_ecdf_plot(
     histories_path: str,
     output_dir: str,
@@ -169,6 +176,90 @@ def create_ecdf_plot(
             filename = output / f"ecdf_{function_name}_n{dimension}.png"
             plt.savefig(filename, dpi=200)
             plt.close()
+
+
+def create_sigma_trajectory_plots(histories_path: str, output_dir: str) -> None:
+    with open(histories_path, "r", encoding="utf-8") as f:
+        histories = json.load(f)
+
+    histories = [
+        h for h in histories
+        if "sigma_history" in h and h["sigma_history"]
+    ]
+
+    if not histories:
+        print("No sigma histories found; skipping sigma trajectory plots.")
+        return
+
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+
+    functions = sorted(set(h["function"] for h in histories))
+    dimensions = sorted(set(h["dimension"] for h in histories))
+    generators = sorted(set(h["generator"] for h in histories))
+
+    for function_name in functions:
+        for dimension in dimensions:
+            for generator_name in generators:
+                runs_by_mode = {}
+
+                for p_sigma_mode in ["zero", "random"]:
+                    runs = [
+                        h["sigma_history"] for h in histories
+                        if h["function"] == function_name
+                        and h["dimension"] == dimension
+                        and h["generator"] == generator_name
+                        and h["p_sigma_mode"] == p_sigma_mode
+                    ]
+                    if runs:
+                        runs_by_mode[p_sigma_mode] = runs
+
+                if set(runs_by_mode) != {"zero", "random"}:
+                    continue
+
+                max_len = max(
+                    len(run)
+                    for runs in runs_by_mode.values()
+                    for run in runs
+                )
+                generations = np.arange(max_len)
+
+                plt.figure(figsize=(8, 5))
+
+                for p_sigma_mode, label in [
+                    ("zero", "standard: p_sigma(0)=0"),
+                    ("random", "modified: p_sigma(0)=random"),
+                ]:
+                    arr = _pad_and_stack(runs_by_mode[p_sigma_mode], max_len)
+                    median = np.median(arr, axis=0)
+                    q25 = np.percentile(arr, 25, axis=0)
+                    q75 = np.percentile(arr, 75, axis=0)
+
+                    line = plt.plot(generations, median, label=label, linewidth=1.5)[0]
+                    plt.fill_between(
+                        generations,
+                        q25,
+                        q75,
+                        color=line.get_color(),
+                        alpha=0.2,
+                    )
+
+                plt.yscale("log")
+                plt.xlabel("Generacja")
+                plt.ylabel("Sigma")
+                plt.title(
+                    f"Trajektoria sigmy — {function_name}, n={dimension}, PRNG={generator_name}"
+                )
+                plt.legend()
+                plt.grid(True, alpha=0.3)
+                plt.tight_layout()
+
+                filename = (
+                    output
+                    / f"sigma_median_iqr_{function_name}_n{dimension}_{generator_name}.png"
+                )
+                plt.savefig(filename, dpi=200)
+                plt.close()
 
 
 def create_boxplots(results_path: str, output_dir: str) -> None:
