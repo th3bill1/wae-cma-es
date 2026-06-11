@@ -4,7 +4,7 @@ import numpy as np
 
 from src.benchmarks import BENCHMARKS, STOCHASTIC_BENCHMARKS, make_gaussian_noise
 from src.cmaes import CMAES, CMAESConfig
-from src.rng import create_rng
+from src.rng import P_SIGMA_SEED_OFFSET, create_p_sigma_rng, create_rng
 
 
 @dataclass
@@ -14,11 +14,14 @@ class ExperimentResult:
     p_sigma_mode: str
     generator_name: str
     seed: int
+    p_sigma_seed: int
     best_f: float
     evaluations: int
     reached_target: bool
     history: list[float]
     mean_history: list[list[float]]
+    sigma_history: list[float]
+    p_sigma_norm_history: list[float]
 
 
 def run_single_experiment(
@@ -38,6 +41,8 @@ def run_single_experiment(
         objective = BENCHMARKS[function_name]
 
     rng = create_rng(generator_name, seed)
+    p_sigma_seed = seed + P_SIGMA_SEED_OFFSET
+    p_sigma_rng = create_p_sigma_rng(generator_name, seed)
 
     config = CMAESConfig(
         dimension=dimension,
@@ -47,21 +52,24 @@ def run_single_experiment(
         initial_sigma=initial_sigma,
     )
 
-    optimizer = CMAES(config=config, rng=rng)
+    optimizer = CMAES(config=config, rng=rng, p_sigma_rng=p_sigma_rng)
     result = optimizer.optimize(objective)
 
     return ExperimentResult(
-    function_name=function_name,
-    dimension=dimension,
-    p_sigma_mode=p_sigma_mode,
-    generator_name=generator_name,
-    seed=seed,
-    best_f=result.best_f,
-    evaluations=result.evaluations,
-    reached_target=result.best_f <= target_f,
-    history=result.history,
-    mean_history=[point.tolist() for point in result.mean_history],
-)
+        function_name=function_name,
+        dimension=dimension,
+        p_sigma_mode=p_sigma_mode,
+        generator_name=generator_name,
+        seed=seed,
+        p_sigma_seed=p_sigma_seed,
+        best_f=result.best_f,
+        evaluations=result.evaluations,
+        reached_target=result.best_f <= target_f,
+        history=result.history,
+        mean_history=[point.tolist() for point in result.mean_history],
+        sigma_history=result.sigma_history,
+        p_sigma_norm_history=result.p_sigma_norm_history,
+    )
 
 
 def experiment_result_to_dict(result: ExperimentResult) -> dict:

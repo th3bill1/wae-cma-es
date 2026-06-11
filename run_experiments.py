@@ -51,6 +51,7 @@ def main() -> None:
                 "p_sigma_mode": result.p_sigma_mode,
                 "generator": result.generator_name,
                 "seed": result.seed,
+                "p_sigma_seed": result.p_sigma_seed,
                 "best_f": result.best_f,
                 "evaluations": result.evaluations,
                 "reached_target": result.reached_target,
@@ -64,7 +65,10 @@ def main() -> None:
                 "p_sigma_mode": result.p_sigma_mode,
                 "generator": result.generator_name,
                 "seed": result.seed,
+                "p_sigma_seed": result.p_sigma_seed,
                 "history": result.history,
+                "sigma_history": result.sigma_history,
+                "p_sigma_norm_history": result.p_sigma_norm_history,
             }
         )
 

@@ -4,6 +4,7 @@ from src.plots import (
     create_convergence_plots,
     create_ecdf_plot,
     create_mean_trajectory_plot,
+    create_sigma_trajectory_plots,
 )
 
 
@@ -29,6 +30,11 @@ def main() -> None:
     )
 
     create_ecdf_plot(
+        histories_path="results/raw/histories.json",
+        output_dir="results/plots",
+    )
+
+    create_sigma_trajectory_plots(
         histories_path="results/raw/histories.json",
         output_dir="results/plots",
     )

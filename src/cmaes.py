@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Literal
 
 import numpy as np
@@ -13,6 +13,8 @@ class CMAESResult:
     evaluations: int
     history: list[float]
     mean_history: list[np.ndarray]
+    sigma_history: list[float] = field(default_factory=list)
+    p_sigma_norm_history: list[float] = field(default_factory=list)
 
 
 @dataclass
@@ -25,9 +27,15 @@ class CMAESConfig:
 
 
 class CMAES:
-    def __init__(self, config: CMAESConfig, rng: np.random.Generator):
+    def __init__(
+        self,
+        config: CMAESConfig,
+        rng: np.random.Generator,
+        p_sigma_rng: np.random.Generator | None = None,
+    ):
         self.config = config
         self.rng = rng
+        self.p_sigma_rng = p_sigma_rng if p_sigma_rng is not None else rng
 
         self.n = config.dimension
         self.lambda_ = 4 + int(3 * np.log(self.n))
@@ -72,7 +80,7 @@ class CMAES:
         if self.config.p_sigma_mode == "zero":
             p_sigma = np.zeros(self.n)
         elif self.config.p_sigma_mode == "random":
-            p_sigma = self.rng.normal(0.0, 1.0, size=self.n)
+            p_sigma = self.p_sigma_rng.normal(0.0, 1.0, size=self.n)
         else:
             raise ValueError(f"Unknown p_sigma_mode: {self.config.p_sigma_mode}")
 
@@ -81,6 +89,8 @@ class CMAES:
         evaluations = 1
         history = [best_f]
         mean_history = [m.copy()]
+        sigma_history = [float(sigma)]
+        p_sigma_norm_history = [float(np.linalg.norm(p_sigma))]
 
         generation = 0
 
@@ -163,6 +173,8 @@ class CMAES:
             C_inv_sqrt = B @ np.diag(1.0 / D) @ B.T
 
             history.append(best_f)
+            sigma_history.append(float(sigma))
+            p_sigma_norm_history.append(float(norm_p_sigma))
 
         return CMAESResult(
             best_x=best_x,
@@ -170,4 +182,6 @@ class CMAES:
             evaluations=evaluations,
             history=history,
             mean_history=mean_history,
+            sigma_history=sigma_history,
+            p_sigma_norm_history=p_sigma_norm_history,
         )
