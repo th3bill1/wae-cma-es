@@ -1,3 +1,5 @@
+from typing import Callable
+
 import numpy as np
 
 
@@ -27,9 +29,18 @@ def ackley(x: np.ndarray) -> float:
     )
 
 
+def make_gaussian_noise(rng: np.random.Generator) -> Callable[[np.ndarray], float]:
+    def gaussian_noise(_x: np.ndarray) -> float:
+        return float(abs(rng.standard_normal()))
+
+    return gaussian_noise
+
+
 BENCHMARKS = {
     "sphere": sphere,
     "rosenbrock": rosenbrock,
     "rastrigin": rastrigin,
     "ackley": ackley,
 }
+
+STOCHASTIC_BENCHMARKS = {"gaussian_noise"}

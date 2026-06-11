@@ -1,5 +1,10 @@
 from src.analysis import create_summary, create_wilcoxon_tests
-from src.plots import create_boxplots, create_mean_trajectory_plot
+from src.plots import (
+    create_boxplots,
+    create_convergence_plots,
+    create_ecdf_plot,
+    create_mean_trajectory_plot,
+)
 
 
 def main() -> None:
@@ -15,6 +20,16 @@ def main() -> None:
 
     create_boxplots(
         results_path="results/raw/results.csv",
+        output_dir="results/plots",
+    )
+
+    create_convergence_plots(
+        histories_path="results/raw/histories.json",
+        output_dir="results/plots",
+    )
+
+    create_ecdf_plot(
+        histories_path="results/raw/histories.json",
         output_dir="results/plots",
     )
 
