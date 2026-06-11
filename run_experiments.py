@@ -65,6 +65,8 @@ def main() -> None:
                 "generator": result.generator_name,
                 "seed": result.seed,
                 "history": result.history,
+                "sigma_history": result.sigma_history,
+                "p_sigma_norm_history": result.p_sigma_norm_history,
             }
         )
 
