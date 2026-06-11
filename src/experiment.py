@@ -4,7 +4,7 @@ import numpy as np
 
 from src.benchmarks import BENCHMARKS, STOCHASTIC_BENCHMARKS, make_gaussian_noise
 from src.cmaes import CMAES, CMAESConfig
-from src.rng import create_rng
+from src.rng import P_SIGMA_SEED_OFFSET, create_p_sigma_rng, create_rng
 
 
 @dataclass
@@ -14,6 +14,7 @@ class ExperimentResult:
     p_sigma_mode: str
     generator_name: str
     seed: int
+    p_sigma_seed: int
     best_f: float
     evaluations: int
     reached_target: bool
@@ -40,6 +41,8 @@ def run_single_experiment(
         objective = BENCHMARKS[function_name]
 
     rng = create_rng(generator_name, seed)
+    p_sigma_seed = seed + P_SIGMA_SEED_OFFSET
+    p_sigma_rng = create_p_sigma_rng(generator_name, seed)
 
     config = CMAESConfig(
         dimension=dimension,
@@ -49,7 +52,7 @@ def run_single_experiment(
         initial_sigma=initial_sigma,
     )
 
-    optimizer = CMAES(config=config, rng=rng)
+    optimizer = CMAES(config=config, rng=rng, p_sigma_rng=p_sigma_rng)
     result = optimizer.optimize(objective)
 
     return ExperimentResult(
@@ -58,6 +61,7 @@ def run_single_experiment(
         p_sigma_mode=p_sigma_mode,
         generator_name=generator_name,
         seed=seed,
+        p_sigma_seed=p_sigma_seed,
         best_f=result.best_f,
         evaluations=result.evaluations,
         reached_target=result.best_f <= target_f,

@@ -27,9 +27,15 @@ class CMAESConfig:
 
 
 class CMAES:
-    def __init__(self, config: CMAESConfig, rng: np.random.Generator):
+    def __init__(
+        self,
+        config: CMAESConfig,
+        rng: np.random.Generator,
+        p_sigma_rng: np.random.Generator | None = None,
+    ):
         self.config = config
         self.rng = rng
+        self.p_sigma_rng = p_sigma_rng if p_sigma_rng is not None else rng
 
         self.n = config.dimension
         self.lambda_ = 4 + int(3 * np.log(self.n))
@@ -74,7 +80,7 @@ class CMAES:
         if self.config.p_sigma_mode == "zero":
             p_sigma = np.zeros(self.n)
         elif self.config.p_sigma_mode == "random":
-            p_sigma = self.rng.normal(0.0, 1.0, size=self.n)
+            p_sigma = self.p_sigma_rng.normal(0.0, 1.0, size=self.n)
         else:
             raise ValueError(f"Unknown p_sigma_mode: {self.config.p_sigma_mode}")
 
