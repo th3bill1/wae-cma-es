@@ -7,11 +7,11 @@ from tqdm import tqdm
 from src.experiment import run_single_experiment
 
 
-FUNCTIONS = ["sphere", "rosenbrock", "rastrigin", "ackley"]
-DIMENSIONS = [2]
+FUNCTIONS = ["sphere", "rosenbrock", "rastrigin", "ackley", "gaussian_noise"]
+DIMENSIONS = [2, 10, 30]
 P_SIGMA_MODES = ["zero", "random"]
 GENERATORS = ["pcg64", "mt19937"]
-SEEDS = list(range(1, 3))
+SEEDS = list(range(1, 31))
 
 MAX_EVALUATIONS = 20_000
 TARGET_F = 1e-8
@@ -71,7 +71,7 @@ def main() -> None:
     pd.DataFrame(rows).to_csv(raw_dir / "results.csv", index=False)
 
     with open(raw_dir / "histories.json", "w", encoding="utf-8") as file:
-        json.dump(histories, file, indent=2)
+        json.dump(histories, file)
 
     print("Saved results to results/raw/results.csv")
     print("Saved histories to results/raw/histories.json")

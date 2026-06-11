@@ -1,0 +1,8 @@
+
+dodatkwoo zbadajmy - zachowanie sie sigmy - trajektoria w czasie na funkcji losowej ktora jest szumem gaussowskim - nie z pojedynczego uruchumienai 
+dobrze by bylo na rozniej klasie problemow optymalizacyjcnyh - fjanie by bylo jednomodalna funckje jeszcze (kwadratowa, elipsoidalna)
+mozemy tez wziac jakis pakiet ccos gdzie sa funckje z congress cos tam cos tam - funckje optymalizacyjne 
+
+nie musimy dochodzic do optimum globalnego 
+krzywe ecdf - robic to statystycznie czy jest zauwazalana zmianai ( uzyc testu tego co mamy Wilcox ) 
+

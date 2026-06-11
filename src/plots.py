@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -13,6 +14,161 @@ PLOT_RANGES = {
     "rastrigin": (-5.5, 5.5, -5.5, 5.5),
     "ackley": (-5, 5, -5, 5),
 }
+
+
+def create_convergence_plots(histories_path: str, output_dir: str) -> None:
+    with open(histories_path, "r", encoding="utf-8") as f:
+        histories = json.load(f)
+
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+
+    functions = sorted(set(h["function"] for h in histories))
+    dimensions = sorted(set(h["dimension"] for h in histories))
+
+    for function_name in functions:
+        for dimension in dimensions:
+            zero_histories = [
+                h["history"] for h in histories
+                if h["function"] == function_name
+                and h["dimension"] == dimension
+                and h["p_sigma_mode"] == "zero"
+            ]
+            random_histories = [
+                h["history"] for h in histories
+                if h["function"] == function_name
+                and h["dimension"] == dimension
+                and h["p_sigma_mode"] == "random"
+            ]
+
+            if not zero_histories or not random_histories:
+                continue
+
+            max_len = max(
+                max(len(h) for h in zero_histories),
+                max(len(h) for h in random_histories),
+            )
+
+            def pad_and_stack(hist_list, length):
+                padded = []
+                for h in hist_list:
+                    padded.append(h + [h[-1]] * (length - len(h)))
+                return np.array(padded)
+
+            zero_arr = pad_and_stack(zero_histories, max_len)
+            random_arr = pad_and_stack(random_histories, max_len)
+
+            zero_median = np.median(zero_arr, axis=0)
+            random_median = np.median(random_arr, axis=0)
+
+            generations = np.arange(max_len)
+
+            plt.figure(figsize=(8, 5))
+            plt.plot(generations, zero_median, label="standard: p_sigma(0)=0", linewidth=1.5)
+            plt.plot(generations, random_median, label="modified: p_sigma(0)=random", linewidth=1.5)
+            plt.yscale("log")
+            plt.xlabel("Generacja")
+            plt.ylabel("Median best f(x)")
+            plt.title(f"Zbieżność — {function_name}, n={dimension}")
+            plt.legend()
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+
+            filename = output / f"convergence_{function_name}_n{dimension}.png"
+            plt.savefig(filename, dpi=200)
+            plt.close()
+
+
+def _lambda_for_dim(dimension: int) -> int:
+    return 4 + int(3 * np.log(dimension))
+
+
+def _eval_counts_for_history(history_length: int, dimension: int) -> np.ndarray:
+    lambda_ = _lambda_for_dim(dimension)
+    return 1 + np.arange(history_length) * lambda_
+
+
+def create_ecdf_plot(
+    histories_path: str,
+    output_dir: str,
+    targets: np.ndarray | None = None,
+    n_xpoints: int = 200,
+) -> None:
+    targets_arr: np.ndarray = (
+        np.logspace(2, -8, 51) if targets is None else targets
+    )
+
+    with open(histories_path, "r", encoding="utf-8") as f:
+        histories = json.load(f)
+
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+
+    functions = sorted(set(h["function"] for h in histories))
+    dimensions = sorted(set(h["dimension"] for h in histories))
+
+    for function_name in functions:
+        for dimension in dimensions:
+            zero_runs = [
+                np.array(h["history"]) for h in histories
+                if h["function"] == function_name
+                and h["dimension"] == dimension
+                and h["p_sigma_mode"] == "zero"
+            ]
+            random_runs = [
+                np.array(h["history"]) for h in histories
+                if h["function"] == function_name
+                and h["dimension"] == dimension
+                and h["p_sigma_mode"] == "random"
+            ]
+
+            if not zero_runs or not random_runs:
+                continue
+
+            max_evals = max(
+                max(_eval_counts_for_history(len(h), dimension)[-1] for h in zero_runs),
+                max(_eval_counts_for_history(len(h), dimension)[-1] for h in random_runs),
+            )
+
+            x_grid = np.unique(
+                np.round(np.logspace(0, np.log10(max_evals), n_xpoints)).astype(int)
+            )
+
+            def ecdf_curve(runs: list[np.ndarray]) -> np.ndarray:
+                total_pairs = len(runs) * len(targets_arr)
+                solved = np.zeros_like(x_grid, dtype=float)
+                for run in runs:
+                    eval_counts = _eval_counts_for_history(len(run), dimension)
+                    for target in targets_arr:
+                        reached_mask = run <= target
+                        if not reached_mask.any():
+                            continue
+                        first_idx = int(np.argmax(reached_mask))
+                        reached_at = eval_counts[first_idx]
+                        solved += (x_grid >= reached_at).astype(float)
+                return solved / total_pairs
+
+            zero_ecdf = ecdf_curve(zero_runs)
+            random_ecdf = ecdf_curve(random_runs)
+
+            plt.figure(figsize=(8, 5))
+            plt.step(x_grid, zero_ecdf, where="post", label="standard: p_sigma(0)=0", linewidth=1.5)
+            plt.step(x_grid, random_ecdf, where="post", label="modified: p_sigma(0)=random", linewidth=1.5)
+            plt.xscale("log")
+            plt.xlabel("Liczba ewaluacji funkcji celu")
+            plt.ylabel("Udział par (run × target) rozwiązanych")
+            plt.title(
+                f"ECDF — {function_name}, n={dimension} "
+                f"({len(targets_arr)} targetów: {targets_arr[0]:.0e}..{targets_arr[-1]:.0e})"
+            )
+            plt.ylim(-0.02, 1.02)
+            plt.legend()
+            plt.grid(True, alpha=0.3, which="both")
+            plt.tight_layout()
+
+            filename = output / f"ecdf_{function_name}_n{dimension}.png"
+            plt.savefig(filename, dpi=200)
+            plt.close()
 
 
 def create_boxplots(results_path: str, output_dir: str) -> None:
